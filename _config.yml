@@ -1,0 +1,22 @@
+# Permalinks
+#
+# Use of `relative_permalinks` ensures post links from the index work properly.
+permalink:           pretty
+
+# Setup
+title:               Shin
+tagline:             ''
+description:         '"If today were the last day of my life, would I want to do what I’m about to do today." -Steve Jobs-'
+url:                 http://hiepnsx.github.io
+baseurl:             ''
+paginate:            5
+gems: ["jekyll-paginate"]
+
+# About/contact
+author:
+  name:              hiepnsx
+  url:               https://twitter.com/hiepnx
+  email:             hiepnx@gmail.com
+
+# Custom vars
+version:             1.0.0
