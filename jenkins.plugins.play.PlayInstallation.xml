@@ -1,0 +1,10 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<jenkins.plugins.play.PlayInstallation_-PlayToolDescriptor plugin="play-autotest-plugin@1.0.2">
+  <installations class="jenkins.plugins.play.PlayInstallation-array">
+    <jenkins.plugins.play.PlayInstallation>
+      <name>Play2.5.6</name>
+      <home>/opt/play2.5.6/bin</home>
+      <properties/>
+    </jenkins.plugins.play.PlayInstallation>
+  </installations>
+</jenkins.plugins.play.PlayInstallation_-PlayToolDescriptor>
