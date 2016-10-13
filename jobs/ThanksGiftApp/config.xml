@@ -1,0 +1,126 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.plugins.git.GitSCM" plugin="git@2.6.0">
+    <configVersion>2</configVersion>
+    <userRemoteConfigs>
+      <hudson.plugins.git.UserRemoteConfig>
+        <url>git@github.com:verve-inc/thanksgift-appli.git</url>
+        <credentialsId>hiepns</credentialsId>
+      </hudson.plugins.git.UserRemoteConfig>
+    </userRemoteConfigs>
+    <branches>
+      <hudson.plugins.git.BranchSpec>
+        <name>*/staging</name>
+      </hudson.plugins.git.BranchSpec>
+    </branches>
+    <doGenerateSubmoduleConfigurations>false</doGenerateSubmoduleConfigurations>
+    <submoduleCfg class="list"/>
+    <extensions/>
+  </scm>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <hudson.tasks.Shell>
+      <command>npm install
+ionic state reset --plugins
+
+ionic platform add android
+
+if [ ! -d &quot;thanksgift_apk&quot; ]; then
+mkdir thanksgift_apk
+else
+rm -rf thanksgift_apk/*
+fi
+
+ionic build android --release --buildConfig=./build/build.json -- --minSdkVersion=16 --maxSdkVersion=18 --targetSdkVersion=18
+cp -f platforms/android/build/outputs/apk/android-armv7-release.apk thanksgift_apk/ThanksGiftv41-44.apk
+cp -f platforms/android/build/outputs/apk/android-x86-release.apk thanksgift_apk/ThanksGiftx86.apk
+rm -rf platforms/android/build/outputs/apk/*
+
+ionic plugin remove cordova-plugin-crosswalk-webview
+ionic build android --release --buildConfig=./build/build.json -- --minSdkVersion=19 --targetSdkVersion=23
+cp -f platforms/android/build/outputs/apk/android-release.apk thanksgift_apk/ThanksGiftv44.apk</command>
+    </hudson.tasks.Shell>
+    <jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin plugin="publish-over-ssh@1.14">
+      <delegate>
+        <consolePrefix>SSH: </consolePrefix>
+        <delegate>
+          <publishers>
+            <jenkins.plugins.publish__over__ssh.BapSshPublisher>
+              <configName>st-thanksgift</configName>
+              <verbose>false</verbose>
+              <transfers>
+                <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                  <remoteDirectory>&apos;build-&apos;$BUILD_ID&apos;_&apos;yyyy-MM-dd</remoteDirectory>
+                  <sourceFiles>thanksgift_apk/*.apk</sourceFiles>
+                  <excludes></excludes>
+                  <removePrefix>thanksgift_apk</removePrefix>
+                  <remoteDirectorySDF>true</remoteDirectorySDF>
+                  <flatten>true</flatten>
+                  <cleanRemote>false</cleanRemote>
+                  <noDefaultExcludes>false</noDefaultExcludes>
+                  <makeEmptyDirs>false</makeEmptyDirs>
+                  <patternSeparator>[, ]+</patternSeparator>
+                  <execCommand></execCommand>
+                  <execTimeout>120000</execTimeout>
+                  <usePty>true</usePty>
+                </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                <jenkins.plugins.publish__over__ssh.BapSshTransfer>
+                  <remoteDirectory>lastest</remoteDirectory>
+                  <sourceFiles>thanksgift_apk/*.apk</sourceFiles>
+                  <excludes></excludes>
+                  <removePrefix>thanksgift_apk</removePrefix>
+                  <remoteDirectorySDF>false</remoteDirectorySDF>
+                  <flatten>false</flatten>
+                  <cleanRemote>false</cleanRemote>
+                  <noDefaultExcludes>false</noDefaultExcludes>
+                  <makeEmptyDirs>false</makeEmptyDirs>
+                  <patternSeparator>[, ]+</patternSeparator>
+                  <execCommand>sudo cp -rf /usr/local/thanksgift_apk/lastest/ThanksGiftv41-44.apk /usr/local/thanksgift_apk/lastest/ThanksGiftv44.apk /var/www/html/st-test/app/webroot/apps</execCommand>
+                  <execTimeout>120000</execTimeout>
+                  <usePty>true</usePty>
+                </jenkins.plugins.publish__over__ssh.BapSshTransfer>
+              </transfers>
+              <useWorkspaceInPromotion>false</useWorkspaceInPromotion>
+              <usePromotionTimestamp>false</usePromotionTimestamp>
+            </jenkins.plugins.publish__over__ssh.BapSshPublisher>
+          </publishers>
+          <continueOnError>false</continueOnError>
+          <failOnError>true</failOnError>
+          <alwaysPublishFromMaster>false</alwaysPublishFromMaster>
+          <hostConfigurationAccess class="jenkins.plugins.publish_over_ssh.BapSshPublisherPlugin" reference="../.."/>
+        </delegate>
+      </delegate>
+    </jenkins.plugins.publish__over__ssh.BapSshBuilderPlugin>
+  </builders>
+  <publishers/>
+  <buildWrappers>
+    <hudson.plugins.ws__cleanup.PreBuildCleanup plugin="ws-cleanup@0.30">
+      <patterns>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>www</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>resources</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+        <hudson.plugins.ws__cleanup.Pattern>
+          <pattern>config.xml</pattern>
+          <type>INCLUDE</type>
+        </hudson.plugins.ws__cleanup.Pattern>
+      </patterns>
+      <deleteDirs>true</deleteDirs>
+      <cleanupParameter></cleanupParameter>
+      <externalDelete></externalDelete>
+    </hudson.plugins.ws__cleanup.PreBuildCleanup>
+  </buildWrappers>
+</project>
